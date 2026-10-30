@@ -1,0 +1,32 @@
+package lanmonitoringserver.protocol;
+
+public enum MessageType {
+    REGISTER,
+    REGISTERED,
+    CONNECT,
+    CHALLENGE,
+    AUTH,
+    AUTH_OK,
+    HEARTBEAT,
+    TELEMETRY,
+    WIRELESS_SIGNAL,
+    WIFI_SCAN,
+    SYSTEM_INFO,
+    SYSTEM_INFO_REQUEST,
+    ALERT,
+    ALERT_ACK,
+    PERMISSIONS_UPDATE,
+    FILE_OFFER,
+    FILE_ACCEPT,
+    FILE_REJECT,
+    FILE_CHUNK,
+    FILE_COMPLETE,
+    FILE_RESULT,
+    FILE_CANCEL,
+    MESSAGE,
+    SERVER_DISCONNECT,
+    ACK,
+    PING,
+    PONG,
+    ERROR
+}

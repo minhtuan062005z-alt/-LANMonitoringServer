@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "hosts": [
+    {
+      "inventoryName": "linux_lab_01",
+      "displayName": "Linux Lab 01",
+      "applicationClientId": "OPTIONAL-JAVA-CLIENT-ID",
+      "platform": "LINUX",
+      "address": "192.0.2.21",
+      "port": 22,
+      "connection": "SSH",
+      "destinationPath": "/opt/lanmonitoring/lan_monitoring_sync.txt",
+      "enabled": true
+    },
+    {
+      "inventoryName": "windows_lab_01",
+      "displayName": "Windows Lab 01",
+      "applicationClientId": "OPTIONAL-JAVA-CLIENT-ID",
+      "platform": "WINDOWS",
+      "address": "windows-lab-01.example.invalid",
+      "port": 5986,
+      "connection": "PSRP",
+      "destinationPath": "C:\\ProgramData\\LANMonitoringServer\\lan_monitoring_sync.txt",
+      "enabled": false
+    }
+  ]
+}

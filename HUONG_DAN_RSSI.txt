@@ -1,0 +1,14 @@
+LANMonitoringServer - Client den hotspot dien thoai (RSSI)
+
+1. Ket noi Server va cac Client vao cung hotspot.
+2. Tren Server: mo PowerShell tai thu muc goc project, chay:
+   .\dist\scripts\run-server-tls.ps1
+   (Can setup TLS va truststore theo tai lieu project truoc khi chay.)
+3. Tren moi Windows Client: mo PowerShell tai thu muc goc project, chay:
+   .\dist\scripts\run-client-tls.ps1 -JavaOption @('-Dlanmonitoring.wifi.enabled=true','-Dlanmonitoring.wifi.interval.ms=2000','-Dlanmonitoring.wifi.share.identifiers=true')
+4. Nhap IPv4 Server tren giao dien Client va ket noi.
+5. Tren Server: mo chi tiet Client -> Network -> Calibrate RSSI. Do cac cap khoang cach thuc te den dien thoai va RSSI, nhap moi dong 'meters,rssi'. Can it nhat 2 diem.
+6. Mo nut Distance tren dashboard de xem bang Client - Hotspot. Network tab co bieu do RSSI va distance realtime.
+7. Kali VM bridged khong co Wi-Fi adapter that se hien NOT_AVAILABLE.
+
+GHI CHU: Day la uoc luong Client -> HOTSPOT, KHONG phai Client -> Server. Tab nhap toa do da an khoi chi tiet Client; cac class cu giu lai de tuong thich. Source duoc build bang 'ant clean jar'.

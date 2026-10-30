@@ -1,0 +1,15 @@
+# Phase 7 secrets and runtime artifacts. Do not commit actual inventory credentials.
+ansible/vault*.yml
+ansible/*password*
+ansible/runtime/
+*.retry
+
+# Local runtime configuration and secrets. Only the reviewed example is tracked.
+config/*.env
+!config/runtime.example.env
+
+# TLS private keys and local trust material must stay outside source control.
+*.p12
+*.pfx
+*.jks
+config/tls/

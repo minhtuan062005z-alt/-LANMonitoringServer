@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+<project name="LANMonitoringServer" default="default" basedir=".">
+    <description>Builds, tests, and runs the project LANMonitoringServer.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <!--
+
+    There exist several targets which are by default empty and which can be 
+    used for execution of your tasks. These targets are usually executed 
+    before and after some main targets. They are: 
+
+      -pre-init:                 called before initialization of project properties
+      -post-init:                called after initialization of project properties
+      -pre-compile:              called before javac compilation
+      -post-compile:             called after javac compilation
+      -pre-compile-single:       called before javac compilation of single file
+      -post-compile-single:      called after javac compilation of single file
+      -pre-compile-test:         called before javac compilation of JUnit tests
+      -post-compile-test:        called after javac compilation of JUnit tests
+      -pre-compile-test-single:  called before javac compilation of single JUnit test
+      -post-compile-test-single: called after javac compilation of single JUunit test
+      -pre-jar:                  called before JAR building
+      -post-jar:                 called after JAR building
+      -post-clean:               called after cleaning build products
+
+    (Targets beginning with '-' are not intended to be called on their own.)
+
+    Example of inserting an obfuscator after compilation could look like this:
+
+        <target name="-post-compile">
+            <obfuscate>
+                <fileset dir="${build.classes.dir}"/>
+            </obfuscate>
+        </target>
+
+    For list of available properties check the imported 
+    nbproject/build-impl.xml file. 
+
+
+    Another way to customize the build is by overriding existing main targets.
+    The targets of interest are: 
+
+      -init-macrodef-javac:     defines macro for javac compilation
+      -init-macrodef-junit:     defines macro for junit execution
+      -init-macrodef-debug:     defines macro for class debugging
+      -init-macrodef-java:      defines macro for class execution
+      -do-jar:                  JAR building
+      run:                      execution of project 
+      -javadoc-build:           Javadoc generation
+      test-report:              JUnit report generation
+
+    An example of overriding the target for project execution could look like this:
+
+        <target name="run" depends="LANMonitoringServer-impl.jar">
+            <exec dir="bin" executable="launcher.exe">
+                <arg file="${dist.jar}"/>
+            </exec>
+        </target>
+
+    Notice that the overridden target depends on the jar target and not only on 
+    the compile target as the regular run target does. Again, for a list of available 
+    properties which you can use, check the target you are overriding in the
+    nbproject/build-impl.xml file. 
+
+    -->
+
+    <!-- Self-contained main-based checks; no JUnit. Runtime dependencies come from local lib/. -->
+    <target name="test-phase1" depends="compile" description="Compile and run protocol/network integration tests">
+        <mkdir dir="${build.test.classes.dir}"/>
+        <javac srcdir="${test.src.dir}"
+               destdir="${build.test.classes.dir}"
+               source="${javac.source}"
+               target="${javac.target}"
+               encoding="${source.encoding}"
+               includeantruntime="false">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+        </javac>
+        <java classname="lanmonitoringserver.protocol.ProtocolTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+        </java>
+        <java classname="lanmonitoringserver.service.NetworkIntegrationTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+        </java>
+    </target>
+
+    <target name="test-phase2" depends="test-phase1" description="Run headless Swing dashboard tests">
+        <java classname="lanmonitoringserver.ui.DashboardTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+            <jvmarg value="-Djava.awt.headless=true"/>
+        </java>
+    </target>
+
+    <target name="test-phase3" depends="test-phase2" description="Run system information collector and parser tests">
+        <java classname="lanmonitoringserver.monitor.system.SystemInfoCollectorTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+        </java>
+    </target>
+
+    <target name="test-phase4" depends="test-phase3" description="Run realtime telemetry and chart tests">
+        <java classname="lanmonitoringserver.service.ClientMetricTrackerTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+        </java>
+        <java classname="lanmonitoringserver.monitor.metrics.MetricsCollectorTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+        </java>
+        <java classname="lanmonitoringserver.ui.PerformancePanelTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+            <jvmarg value="-Djava.awt.headless=true"/>
+        </java>
+    </target>
+
+    <target name="test-phase5" depends="test-phase4" description="Run alert engine, delivery and persistence tests">
+        <java classname="lanmonitoringserver.service.AlertEngineTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+        </java>
+        <java classname="lanmonitoringserver.service.AdminNotificationIntegrationTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+            <jvmarg value="-Djava.awt.headless=true"/>
+        </java>
+        <java classname="lanmonitoringserver.ui.AdminNotificationPanelTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+            <jvmarg value="-Djava.awt.headless=true"/>
+        </java>
+    </target>
+
+    <target name="test-phase6" depends="test-phase5" description="Run TLS file transfer and RBAC tests">
+        <java classname="lanmonitoringserver.ui.FileTransferPanelTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+            <jvmarg value="-Djava.awt.headless=true"/>
+        </java>
+        <java classname="lanmonitoringserver.service.FileTransferIntegrationTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+        </java>
+        <java classname="lanmonitoringserver.service.Phase6SecurityValidationTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+        </java>
+    </target>
+
+    <target name="test-phase7" depends="test-phase6" description="Run controlled Ansible integration tests">
+        <java classname="lanmonitoringserver.service.AnsibleIntegrationTest" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <pathelement location="${build.test.classes.dir}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <jvmarg value="-ea"/>
+        </java>
+    </target>
+
+    <target name="test-phase8" depends="test-phase7" description="Run wireless collection and distance-estimation tests">
+        <java classname="lanmonitoringserver.monitor.wireless.WirelessCollectorTest" fork="true" failonerror="true">
+            <classpath><pathelement location="${build.classes.dir}"/><pathelement location="${build.test.classes.dir}"/><pathelement path="${javac.classpath}"/></classpath>
+            <jvmarg value="-ea"/>
+        </java>
+        <java classname="lanmonitoringserver.service.WirelessPhase8Test" fork="true" failonerror="true">
+            <classpath><pathelement location="${build.classes.dir}"/><pathelement location="${build.test.classes.dir}"/><pathelement path="${javac.classpath}"/></classpath>
+            <jvmarg value="-ea"/><jvmarg value="-Djava.awt.headless=true"/>
+        </java>
+        <java classname="lanmonitoringserver.service.WirelessTransportIntegrationTest" fork="true" failonerror="true">
+            <classpath><pathelement location="${build.classes.dir}"/><pathelement location="${build.test.classes.dir}"/><pathelement path="${javac.classpath}"/></classpath>
+            <jvmarg value="-ea"/>
+        </java>
+    </target>
+
+    <target name="test-phase9" depends="test-phase8" description="Run final stability, resource and UI lifecycle checks">
+        <java classname="lanmonitoringserver.service.ServerClientDistanceTest" fork="true" failonerror="true">
+            <classpath><pathelement location="${build.classes.dir}"/><pathelement location="${build.test.classes.dir}"/><pathelement path="${javac.classpath}"/></classpath>
+            <jvmarg value="-ea"/><jvmarg value="-Djava.awt.headless=true"/>
+        </java>
+        <java classname="lanmonitoringserver.ui.DistanceManagementPanelTest" fork="true" failonerror="true">
+            <classpath><pathelement location="${build.classes.dir}"/><pathelement location="${build.test.classes.dir}"/><pathelement path="${javac.classpath}"/></classpath>
+            <jvmarg value="-ea"/><jvmarg value="-Djava.awt.headless=true"/>
+        </java>
+        <java classname="lanmonitoringserver.service.Phase9StabilityTest" fork="true" failonerror="true">
+            <classpath><pathelement location="${build.classes.dir}"/><pathelement location="${build.test.classes.dir}"/><pathelement path="${javac.classpath}"/></classpath>
+            <jvmarg value="-ea"/>
+        </java>
+        <java classname="lanmonitoringserver.ui.Phase9UiStabilityTest" fork="true" failonerror="true">
+            <classpath><pathelement location="${build.classes.dir}"/><pathelement location="${build.test.classes.dir}"/><pathelement path="${javac.classpath}"/></classpath>
+            <jvmarg value="-ea"/><jvmarg value="-Djava.awt.headless=true"/>
+        </java>
+        <java classname="lanmonitoringserver.monitor.wireless.MultiAccessPointScannerTest" fork="true" failonerror="true">
+            <classpath><pathelement location="${build.classes.dir}"/><pathelement location="${build.test.classes.dir}"/><pathelement path="${javac.classpath}"/></classpath>
+            <jvmarg value="-ea"/>
+        </java>
+        <java classname="lanmonitoringserver.service.WifiFingerprintTest" fork="true" failonerror="true">
+            <classpath><pathelement location="${build.classes.dir}"/><pathelement location="${build.test.classes.dir}"/><pathelement path="${javac.classpath}"/></classpath>
+            <jvmarg value="-ea"/><jvmarg value="-Djava.awt.headless=true"/>
+        </java>
+        <java classname="lanmonitoringserver.ui.WifiFingerprintPanelTest" fork="true" failonerror="true">
+            <classpath><pathelement location="${build.classes.dir}"/><pathelement location="${build.test.classes.dir}"/><pathelement path="${javac.classpath}"/></classpath>
+            <jvmarg value="-ea"/><jvmarg value="-Djava.awt.headless=true"/>
+        </java>
+    </target>
+
+    <!-- Keep the conventional Ant entry point meaningful for this main-based test suite. -->
+    <target name="test" depends="test-phase9" description="Run all Phase 1-9 regression tests"/>
+
+    <!-- Clean release gate: tests must pass before NetBeans/CopyLibs creates the distribution. -->
+    <target name="release-phase5" depends="clean,test-phase5,jar"
+            description="Clean, test, and package the Phase 5 distribution"/>
+
+    <target name="release-phase6" depends="clean,test-phase6,jar"
+            description="Clean, test, and package the Phase 6 distribution"/>
+
+    <target name="release-phase7" depends="clean,test-phase7,jar"
+            description="Clean, test, and package the Phase 7 distribution"/>
+
+    <target name="release-phase8" depends="clean,test-phase8,jar"
+            description="Clean, test, and package the Phase 8 distribution"/>
+
+    <target name="release-phase9" depends="clean,test-phase9,jar"
+            description="Clean, test, and package the final Phase 9 distribution"/>
+
+    <!-- Ship only reviewed automation assets; never copy vault/password/runtime files into dist. -->
+    <target name="-post-jar">
+        <copy todir="${dist.dir}/ansible">
+            <fileset dir="ansible">
+                <include name="ansible.cfg"/>
+                <include name="playbooks/*.yml"/>
+                <include name="collections/requirements.yml"/>
+                <include name="config/managed-hosts.example.json"/>
+            </fileset>
+        </copy>
+        <copy todir="${dist.dir}/scripts">
+            <fileset dir="scripts">
+                <include name="run-server.bat"/>
+                <include name="run-client.bat"/>
+                <include name="run-server.sh"/>
+                <include name="run-client.sh"/>
+                <include name="setup-tls-windows.ps1"/>
+                <include name="run-server-tls.ps1"/>
+                <include name="run-client-tls.ps1"/>
+            </fileset>
+        </copy>
+        <copy todir="${dist.dir}/config">
+            <fileset dir="config">
+                <include name="runtime.example.env"/>
+            </fileset>
+        </copy>
+        <copy file="README.md" todir="${dist.dir}"/>
+        <copy file="THIRD_PARTY_NOTICES.md" todir="${dist.dir}"/>
+        <copy todir="${dist.dir}/docs">
+            <fileset dir="docs">
+                <include name="README.md"/>
+                <include name="PROJECT_OVERVIEW.md"/>
+                <include name="ARCHITECTURE.md"/>
+                <include name="PROTOCOL.md"/>
+                <include name="FEATURES.md"/>
+                <include name="INSTALLATION.md"/>
+                <include name="DEMO_GUIDE.md"/>
+                <include name="TEST_RESULTS.md"/>
+                <include name="LIMITATIONS_AND_FUTURE_WORK.md"/>
+                <include name="PHASE9_MULTI_DEVICE_CHECKLIST.md"/>
+                <include name="WINDOWS_WIRELESS_DIAGNOSTICS.md"/>
+                <include name="SERVER_CLIENT_DISTANCE_DESIGN.md"/>
+                <include name="SERVER_CLIENT_DISTANCE_TEST_CHECKLIST.md"/>
+                <include name="PHASE7_ANSIBLE_SETUP.md"/>
+                <include name="PHASE7_TEST_CHECKLIST.md"/>
+                <include name="PHASE8_TECHNICAL_REPORT.md"/>
+                <include name="PHASE8_WIFI_TEST_CHECKLIST.md"/>
+                <include name="WIFI_FINGERPRINTING_GUIDE.md"/>
+                <include name="WIFI_FINGERPRINTING_FIELD_TEST_CHECKLIST.md"/>
+                <include name="PHASE6_GUI_TEST_CHECKLIST.md"/>
+                <include name="PHASE5_GUI_TEST_CHECKLIST.md"/>
+            </fileset>
+        </copy>
+    </target>
+</project>

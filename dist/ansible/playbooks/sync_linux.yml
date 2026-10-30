@@ -1,0 +1,35 @@
+---
+- name: Synchronize LAN monitoring text file on Linux
+  hosts: lan_linux
+  gather_facts: false
+  tasks:
+    - name: Copy the managed UTF-8 text file
+      ansible.builtin.copy:
+        src: "{{ lan_sync_source }}"
+        dest: "{{ lan_sync_dest }}"
+        mode: "0644"
+        force: true
+      register: sync_copy
+      tags: [deploy]
+
+    - name: Read deployed file SHA-256
+      ansible.builtin.stat:
+        path: "{{ lan_sync_dest }}"
+        checksum_algorithm: sha256
+      register: sync_stat
+      tags: [verify]
+
+    - name: Require the expected SHA-256
+      ansible.builtin.assert:
+        that:
+          - sync_stat.stat.exists
+          - sync_stat.stat.isreg
+          - sync_stat.stat.checksum == lan_sync_sha256
+        fail_msg: "Managed file SHA-256 does not match"
+        quiet: true
+      tags: [verify]
+
+    - name: Emit machine-readable synchronization result
+      ansible.builtin.debug:
+        msg: "LANMONITORING_RESULT|host={{ inventory_hostname }}|status=SUCCESS|changed={{ (sync_copy | default({'changed': false})).changed | bool | lower }}|sha256={{ sync_stat.stat.checksum }}"
+      tags: [verify]
